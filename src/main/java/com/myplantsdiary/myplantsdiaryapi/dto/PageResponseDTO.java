@@ -40,7 +40,7 @@ public class PageResponseDTO<E> {
 
         this.prevPage = prev ? startPage - 1 : 0;
         this.nextPage = next ? endPage + 1 : 0;
-
+        this.currentPage = current;
 
     }
 
