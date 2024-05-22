@@ -31,10 +31,10 @@ public class PageResponseDTO<E> {
         int current = pageRequestDTO.getPage();
         int curSize = pageRequestDTO.getSize();
         int startPage = (current-1)/curSize * curSize + 1;
-        int endPage = Math.min(startPage + pageRequestDTO.getSize() - 1, totalCount);
+        int endPage = Math.min(startPage + pageRequestDTO.getSize() - 1, (totalCount/curSize)+1);
 
         this.prev = startPage > 1;
-        this.next = totalCount > endPage;
+        this.next = (totalCount/curSize)+1 > endPage;
 
         this.pageNumList = IntStream.rangeClosed(startPage, endPage).boxed().collect(Collectors.toList());
 
