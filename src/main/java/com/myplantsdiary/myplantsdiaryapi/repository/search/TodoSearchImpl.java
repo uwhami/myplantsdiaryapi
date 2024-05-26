@@ -9,6 +9,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 public class TodoSearchImpl extends QuerydslRepositorySupport implements TodoSearch{
@@ -19,7 +20,7 @@ public class TodoSearchImpl extends QuerydslRepositorySupport implements TodoSea
 
     @Override
     public Page<Todo> search1(PageRequestDTO pageRequestDTO) {
-        log.info("search1................");
+//        log.info("search1................");
         QTodo todo = QTodo.todo;
         JPQLQuery<Todo> query = from(todo);
 //        query.where(todo.title.contains("1"));
@@ -29,7 +30,7 @@ public class TodoSearchImpl extends QuerydslRepositorySupport implements TodoSea
                 pageRequestDTO.getSize(),
                 Sort.by("tno").descending());
 
-        this.getQuerydsl().applyPagination(pageable, query);
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, query);
 
         List<Todo> list = query.fetch();
         long total = query.fetchCount();
