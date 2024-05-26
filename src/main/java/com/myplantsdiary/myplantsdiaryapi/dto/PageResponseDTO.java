@@ -28,19 +28,19 @@ public class PageResponseDTO<E> {
         this.totalCount = (int) total;
 
         //끝페이지 계산.
-        int current = pageRequestDTO.getPage();
+        this.currentPage = pageRequestDTO.getPage();
         int curSize = pageRequestDTO.getSize();
-        int startPage = (current-1)/curSize * curSize + 1;
-        int endPage = Math.min(startPage + pageRequestDTO.getSize() - 1, (totalCount/curSize)+1);
+        int startPage = (currentPage-1)/10 * 10 + 1;
+        int endPage = Math.min(startPage + 9, ((totalCount-1)/curSize)+1);
 
         this.prev = startPage > 1;
-        this.next = (totalCount/curSize)+1 > endPage;
+        this.next = (totalCount/curSize) > endPage;
 
         this.pageNumList = IntStream.rangeClosed(startPage, endPage).boxed().collect(Collectors.toList());
 
         this.prevPage = prev ? startPage - 1 : 0;
         this.nextPage = next ? endPage + 1 : 0;
-        this.currentPage = current;
+
 
     }
 

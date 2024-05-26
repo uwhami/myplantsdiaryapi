@@ -23,4 +23,6 @@ public class TodoDTO {
 
     private LocalDate dueDate;
 
+    private String writer;
+
 }

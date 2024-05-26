@@ -27,6 +27,7 @@ public interface TodoService {
                 .content(todo.getContent())
                 .complete(todo.isComplete())
                 .dueDate(todo.getDueDate())
+                .writer(todo.getWriter())
                 .build();
     }
 
@@ -38,6 +39,7 @@ public interface TodoService {
                 .content(todoDTO.getContent())
                 .complete(todoDTO.isComplete())
                 .dueDate(todoDTO.getDueDate())
+                .writer(todoDTO.getWriter())
                 .build();
     }
 
