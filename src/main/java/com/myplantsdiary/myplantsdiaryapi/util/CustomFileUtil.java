@@ -5,6 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.filter.OrderedHiddenHttpMethodFilter;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomFileUtil {
 
+    private final OrderedHiddenHttpMethodFilter hiddenHttpMethodFilter;
     @Value("${org.zerock.upload.path}")
     private String uploadPath;
 
@@ -68,5 +74,42 @@ public class CustomFileUtil {
         return uploadNames;
     }
 
+    public ResponseEntity<Resource> getFile(String fileName) {
+
+        Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
+
+        if(!resource.isReadable()){
+            resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
+        }
+        HttpHeaders headers = new HttpHeaders();
+        try{
+            headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
+        }catch(IOException e){
+            throw new RuntimeException(e);
+        }
+
+        return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    public void deleteFiles(List<String> fileNames){
+        if(fileNames == null || fileNames.isEmpty()){
+            return;
+        }
+        fileNames.forEach(fileName -> {
+           //썸네일 있으면 삭제
+           String thumbnailFileName = "S_" + fileName;
+
+           Path thumbPath = Paths.get(uploadPath, thumbnailFileName);
+           Path filePath = Paths.get(uploadPath, fileName);
+
+           try{
+               Files.deleteIfExists(thumbPath);
+               Files.deleteIfExists(filePath);
+           }catch(IOException e){
+               throw new RuntimeException(e);
+           }
+
+        });
+    }
 
 }
