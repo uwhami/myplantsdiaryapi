@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.filter.OrderedHiddenHttpMethodFilter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +26,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomFileUtil {
 
-    private final OrderedHiddenHttpMethodFilter hiddenHttpMethodFilter;
     @Value("${org.zerock.upload.path}")
     private String uploadPath;
 
