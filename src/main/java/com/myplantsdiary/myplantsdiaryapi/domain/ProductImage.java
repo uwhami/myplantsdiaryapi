@@ -1,7 +1,6 @@
 package com.myplantsdiary.myplantsdiaryapi.domain;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
 import lombok.*;
 
 @Embeddable
