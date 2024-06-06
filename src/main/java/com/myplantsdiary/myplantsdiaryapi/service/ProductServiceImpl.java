@@ -15,7 +15,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Log4j2
@@ -23,6 +26,43 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+
+    private Product dtoToEntity(ProductDTO dto) {
+        Product product = Product.builder()
+                .pno(dto.getPno())
+                .pname(dto.getPname())
+                .pdesc(dto.getPdesc())
+                .price(dto.getPrice())
+                .build();
+
+        List<String> uploadFileNames = dto.getUploadFileNames();
+        if(uploadFileNames == null || uploadFileNames.isEmpty()) {
+            return product;
+        }
+
+        uploadFileNames.forEach(product::addImageString);
+        return product;
+    }
+
+    private ProductDTO entityToDto(Product product) {
+        ProductDTO productDTO = ProductDTO.builder()
+                .pno(product.getPno())
+                .pname(product.getPname())
+                .pdesc(product.getPdesc())
+                .price(product.getPrice())
+                .delFlag(product.isDelFlag())
+                .build();
+
+        List<ProductImage> imageList = product.getImageList();
+        if(imageList == null || imageList.isEmpty()) {
+            return productDTO;
+        }
+
+//        List<String> fileNameList = imageList.stream().map(productImage -> productImage.getFilename()).toList();
+        List<String> fileNameList = imageList.stream().map(ProductImage::getFilename).toList();
+        productDTO.setUploadFileNames(fileNameList);
+        return productDTO;
+    }
 
     @Override
     public PageResponseDTO<ProductDTO> getList(PageRequestDTO pageRequestDTO) {
@@ -52,7 +92,7 @@ public class ProductServiceImpl implements ProductService{
             productDTO.setUploadFileNames(List.of(imageStr));
 
             return productDTO;
-        }).collect(Collectors.toList());
+        }).collect(toList());
 
         long totalCount = result.getTotalElements();
 
@@ -62,6 +102,23 @@ public class ProductServiceImpl implements ProductService{
                 .total(totalCount)
                 .pageRequestDTO(pageRequestDTO)
                 .build();
+    }
+
+    @Override
+    public Long register(ProductDTO productDTO) {
+        Product product = dtoToEntity(productDTO);
+        productRepository.save(product);
+        log.info("------------------------");
+        log.info(product);
+        log.info(product.getImageList());
+        return product.getPno();
+    }
+
+    @Override
+    public ProductDTO get(Long pno) {
+        Optional<Product> result = productRepository.findById(pno);
+        Product product = result.orElseThrow();
+        return entityToDto(product);
     }
 
 }
