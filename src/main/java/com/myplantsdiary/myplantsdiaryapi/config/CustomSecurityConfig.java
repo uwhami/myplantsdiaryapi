@@ -28,6 +28,9 @@ public class CustomSecurityConfig {
             httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
         });
 
+        /* 스프링 시큐러티 4 버전에서는 스프링 폼에서 CSRF 토큰을 사용해 크로스 사이트 요청 위조(cross-site request forgery)를 방지할 수 있으나, 간단하게 하기 위해 disable() 처리.
+        *  disable() : CSFR 토큰을 사용하지 않도록 비활성화.
+        *  기본적으로 CSRF 요소 구성없이 만들어진 구성은 유효하지 않으며 모든 로그인 요청은 403으로 이동. --> 전문가를 위한 스프링5 책 16.12 */
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
         return http.build();
@@ -45,7 +48,7 @@ public class CustomSecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(true);    //header가 없는 응답들은 거르겠다는 뜻
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
