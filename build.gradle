@@ -59,6 +59,7 @@ dependencies {
 	)
 
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
 
 }
 
