@@ -24,7 +24,7 @@ public class MemberRepositoryTests {
         for(int i=0; i<10; i++){
             Member member = Member.builder()
                     .email("user"+i+"@aaa.com")
-                    .pw(passwordEncoder.encode("1"))
+                    .password(passwordEncoder.encode("1"))
                     .nickname("USER"+i)
                     .build();
 
@@ -41,12 +41,35 @@ public class MemberRepositoryTests {
     }
 
     @Test
+    public void testInsert2(){
+        Member member = Member.builder()
+                .email("user10@aaa.com")
+                .password(passwordEncoder.encode("a"))
+                .nickname("USER10")
+                .build();
+
+        member.addRole(MemberRole.USER);
+        member.addRole(MemberRole.MANAGER);
+        member.addRole(MemberRole.ADMIN);
+        memberRepository.save(member);
+    }
+
+    @Test
     public void testRead(){
         String email = "user0@aaa.com";
         Member member = memberRepository.getWithRoles(email);   //자동으로 조인되는지 확인
         log.info("===================");
         log.info(member);
         log.info(member.getMemberRoleList());
+    }
+
+    @Test
+    public void testCheckPassword(){
+
+        String email = "user9@aaa.com";
+        Member member = memberRepository.getWithRoles(email);
+        boolean check = passwordEncoder.matches("1", member.getPassword());
+        log.info("=================== password check ================== " + check);
     }
 
 }
