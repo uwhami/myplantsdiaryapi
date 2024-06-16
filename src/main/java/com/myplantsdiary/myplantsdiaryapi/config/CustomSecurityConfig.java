@@ -1,5 +1,7 @@
 package com.myplantsdiary.myplantsdiaryapi.config;
 
+import com.myplantsdiary.myplantsdiaryapi.security.handler.APILoginFailHandler;
+import com.myplantsdiary.myplantsdiaryapi.security.handler.APILoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +51,10 @@ public class CustomSecurityConfig {
 
 
         http.formLogin(config -> {
-            config.loginPage("/api/member/login");});
+            config.loginPage("/api/member/login");
+            config.successHandler(new APILoginSuccessHandler());
+            config.failureHandler(new APILoginFailHandler());
+        });
 
         return http.build();
 
