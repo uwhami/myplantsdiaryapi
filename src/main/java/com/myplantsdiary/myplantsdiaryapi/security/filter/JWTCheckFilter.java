@@ -1,16 +1,20 @@
 package com.myplantsdiary.myplantsdiaryapi.security.filter;
 
 import com.google.gson.Gson;
+import com.myplantsdiary.myplantsdiaryapi.dto.MemberDTO;
 import com.myplantsdiary.myplantsdiaryapi.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 
 /* OncePerRequestFilter : 모든 request에 대해 필터 제공 */
@@ -24,6 +28,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         log.info("check uri ==================== " + path);
 
+        if(path.startsWith("/api/member/")){
+            return true;
+        }
 
 
         return false;   /* false -> 체크한다는 뜻 */
@@ -48,7 +55,25 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             log.info(claims);
 
+            // 다음 목적지로 가게 하는 용도.
+            //filterChain.doFilter(request, response);
+
+            String email = (String) claims.get("email");
+            String pw = (String) claims.get("password");
+            String nickname = (String) claims.get("nickname");
+            Boolean social = (Boolean) claims.get("social");
+            List<String> roleNames = (List<String>) claims.get("roleNames");
+
+            MemberDTO memberDTO = new MemberDTO(email, pw, nickname, social.booleanValue(), roleNames);
+
+            log.info("==============================");
+            log.info("memberDTO " + memberDTO);
+            log.info(memberDTO.getAuthorities());
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDTO, pw, memberDTO.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
+
         }catch(Exception e){
 
             log.error("JWT Check Error.........................");
@@ -65,8 +90,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
 
 
-        // 다음 목적지로 가게 하는 용도.
-        filterChain.doFilter(request, response);
 
     }
 }
