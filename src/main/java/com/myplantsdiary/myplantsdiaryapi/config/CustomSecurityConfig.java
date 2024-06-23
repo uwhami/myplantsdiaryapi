@@ -3,6 +3,7 @@ package com.myplantsdiary.myplantsdiaryapi.config;
 import com.myplantsdiary.myplantsdiaryapi.security.filter.JWTCheckFilter;
 import com.myplantsdiary.myplantsdiaryapi.security.handler.APILoginFailHandler;
 import com.myplantsdiary.myplantsdiaryapi.security.handler.APILoginSuccessHandler;
+import com.myplantsdiary.myplantsdiaryapi.security.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,10 @@ public class CustomSecurityConfig {
         });
 
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+            httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler());
+        });
 
 
         return http.build();
