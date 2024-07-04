@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-public class APiRefreshController {
+public class APIRefreshController {
 
     @RequestMapping("/api/member/refresh")
     public Map<String, Object> refresh(
