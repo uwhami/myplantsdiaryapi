@@ -3,6 +3,7 @@ package com.myplantsdiary.myplantsdiaryapi.service;
 import com.myplantsdiary.myplantsdiaryapi.domain.Member;
 import com.myplantsdiary.myplantsdiaryapi.domain.MemberRole;
 import com.myplantsdiary.myplantsdiaryapi.dto.MemberDTO;
+import com.myplantsdiary.myplantsdiaryapi.dto.MemberModifyDTO;
 import com.myplantsdiary.myplantsdiaryapi.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,6 +40,7 @@ public class MemberServiceImpl implements MemberService{
 
         if(result.isPresent()) {
             Member member = result.get();
+            log.info("existed..................");
             return entityToDTO(member);
         }
 
@@ -47,6 +49,19 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.save(socialMember);
 
         return entityToDTO(socialMember);
+    }
+
+    @Override
+    public void modifyMember(MemberModifyDTO memberModifyDTO) {
+
+        Optional<Member> result = memberRepository.findById(memberModifyDTO.getEmail());
+
+        Member member = result.orElseThrow();
+        member.changeNickname(memberModifyDTO.getNickname());
+        member.changeSocial(false);
+        member.changePassword(passwordEncoder.encode(memberModifyDTO.getPassword()));
+
+        memberRepository.save(member);
     }
 
     private Member makeSocialMember(String nickname){
