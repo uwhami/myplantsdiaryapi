@@ -12,7 +12,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     //특정한 사용자의 모든 장바구니 아이템들을 가져올 경우. input -> email, out -> CartItemListDTO
     @Query("select " +  //ci, mc, p,
-            " new com.myplantsdiary.myplantsdiaryapi.dto.CartItemListDTO(ci.cino, ci.quantity, p.pname, p.price, pi.filename)" +
+            " new com.myplantsdiary.myplantsdiaryapi.dto.CartItemListDTO(ci.cino, ci.quantity, p.pno, p.pname, p.price, pi.filename)" +
             "from CartItem ci " +
             "inner join Cart mc on mc = ci.cart " +
             "left join Product p on p = ci.product " +
@@ -38,7 +38,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     //장바구니 번호로 모든 장바구니 아이템들 조회.
     @Query("select " +
-            "new com.myplantsdiary.myplantsdiaryapi.dto.CartItemListDTO(ci.cino, ci.quantity, p.pname, p.price, pi.filename) " +
+            "new com.myplantsdiary.myplantsdiaryapi.dto.CartItemListDTO(ci.cino, ci.quantity, p.pno, p.pname, p.price, pi.filename) " +
             "from CartItem ci " +
             "inner join Cart c on c = ci.cart " +
             "left join Product p on p = ci.product " +
