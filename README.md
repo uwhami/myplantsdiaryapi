@@ -1,2 +1,2 @@
 # myplantsdiaryapi
-my first app - my plants diary api
+Backend Spring Boot of Spring Boot - React App
